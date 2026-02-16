@@ -63,10 +63,10 @@ pipeline {
                                 sh """
                                    rm -rf node-bin
                                    echo "Installing Node.js locally..."
-                                   curl -sO https://nodejs.org/dist/v20.11.0/node-v20.11.0-linux-x64.tar.xz
-                                   tar -xf node-v20.11.0-linux-x64.tar.xz
-                                   mv node-v20.11.0-linux-x64 node-bin
-                                   rm node-v20.11.0-linux-x64.tar.xz
+                                   curl -sO https://nodejs.org/dist/v22.12.0/node-v22.12.0-linux-x64.tar.xz
+                                   tar -xf node-v22.12.0-linux-x64.tar.xz
+                                   mv node-v22.12.0-linux-x64 node-bin
+                                   rm node-v22.12.0-linux-x64.tar.xz
                                 """
                                 withEnv(["PATH=${pwd()}/node-bin/bin:${env.PATH}"]) {
                                     sh 'npm install'
