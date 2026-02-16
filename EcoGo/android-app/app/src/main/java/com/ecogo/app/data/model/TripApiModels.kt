@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 /**
  * ========================================
  * 行程API相关模型（对接后端API）
- * Base URL: http://47.129.124.55:8090/api/v1
+ * Base URL: http://18.141.213.152:8090/api/v1
  * ========================================
  */
 

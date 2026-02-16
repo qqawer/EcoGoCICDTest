@@ -10,7 +10,7 @@ vi.mock('./auth', () => ({
 }));
 
 describe('vipService', () => {
-    const BASE_URL = 'http://47.129.124.55:8090/api/v1';
+    const BASE_URL = 'http://18.141.213.152:8090/api/v1';
 
     beforeEach(() => {
         vi.clearAllMocks();

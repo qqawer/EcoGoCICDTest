@@ -32,7 +32,7 @@ export interface LoginResponse {
 
 // 核心修正：baseURL 改为完整的后端地址，而非相对路径！
 export const api = axios.create({
-    baseURL: 'http://47.129.124.55:8090/api/v1/web', // 原错误：'/api/v1/web'
+    baseURL: 'http://18.141.213.152:8090/api/v1/web', // 原错误：'/api/v1/web'
     headers: {
         'Content-Type': 'application/json',
     },

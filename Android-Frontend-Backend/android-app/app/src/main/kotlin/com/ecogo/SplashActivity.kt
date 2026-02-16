@@ -60,7 +60,7 @@ class SplashActivity : AppCompatActivity() {
     }
 
     private fun fetchAndDisplayAd(imgAd: ImageView) {
-        val adUrl = "http://47.129.124.55:8090/api/v1/advertisements/active"
+        val adUrl = "http://18.141.213.152:8090/api/v1/advertisements/active"
 
         Thread {
             try {

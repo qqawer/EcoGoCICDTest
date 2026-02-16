@@ -397,7 +397,7 @@ MapActivity.saveNavigationHistory()
 ```kotlin
 object RetrofitClient {
     // 🌐 选择你的环境
-    private const val BASE_URL = "http://47.129.124.55:8090/api/v1/"  // ✅ 生产环境
+    private const val BASE_URL = "http://18.141.213.152:8090/api/v1/"  // ✅ 生产环境
 
     // 其他选项：
     // private const val BASE_URL = "http://10.0.2.2:8090/api/v1/"  // 模拟器本地
@@ -450,7 +450,7 @@ if (!token.isNullOrEmpty()) {
 1. **网络连接**
    ```bash
    # 测试服务器是否可达
-   ping 47.129.124.55
+   ping 18.141.213.152
    ```
 
 2. **Base URL配置**
@@ -533,7 +533,7 @@ result.onFailure { error ->
 
 ```bash
 # 测试开始行程
-curl -X POST http://47.129.124.55:8090/api/v1/mobile/trips/start \
+curl -X POST http://18.141.213.152:8090/api/v1/mobile/trips/start \
   -H "Authorization: Bearer your_token" \
   -H "Content-Type: application/json" \
   -d '{
@@ -556,7 +556,7 @@ private const val BASE_URL = "http://dev-cn.your-api-server.com/"
 private const val BASE_URL = "http://test-cn.your-api-server.com/"
 
 // 生产环境
-private const val BASE_URL = "http://47.129.124.55:8090/api/v1/"
+private const val BASE_URL = "http://18.141.213.152:8090/api/v1/"
 ```
 
 ---

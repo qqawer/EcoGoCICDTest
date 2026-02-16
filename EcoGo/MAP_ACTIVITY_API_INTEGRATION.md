@@ -390,7 +390,7 @@ lifecycleScope.launch {
 
 1. Base URL是否正确（RetrofitClient.kt）
 2. Token是否设置（tripRepository.setAuthToken）
-3. 网络是否可达（ping 47.129.124.55）
+3. 网络是否可达（ping 18.141.213.152）
 4. 查看Logcat日志（过滤 "TripRepository"）
 5. 使用Postman测试API是否正常
 
