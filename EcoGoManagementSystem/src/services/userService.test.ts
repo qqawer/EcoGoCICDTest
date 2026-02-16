@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { fetchUserList, fetchUserDetail, updateUser, updateUserStatus, UpdateUserRequest } from './userService';
+import { fetchUserList, fetchUserDetail, updateUser, updateUserStatus, type UpdateUserRequest } from './userService';
 import { api } from './auth';
 
 // Mock the api instance from auth module
