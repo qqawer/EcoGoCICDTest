@@ -59,7 +59,6 @@ pipeline {
                         dir('EcoGoManagementSystem') {
                             script {
                                 // Install Node v20 (Required by dependencies)
-                                sh """
                                 // Install Node.js (Force update to ensure correct version)
                                 sh """
                                    rm -rf node-bin
@@ -68,7 +67,6 @@ pipeline {
                                    tar -xf node-v22.20.0-linux-x64.tar.xz
                                    mv node-v22.20.0-linux-x64 node-bin
                                    rm node-v22.20.0-linux-x64.tar.xz
-                                """
                                 """
                                 withEnv(["PATH=${pwd()}/node-bin/bin:${env.PATH}"]) {
                                     sh 'npm install'
