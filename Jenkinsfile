@@ -2,8 +2,8 @@ pipeline {
     agent any
 
     tools {
-        jdk 'jdk-17'
-        maven 'maven-3.9.5'
+        jdk 'JDK 17'
+        maven 'Maven 3.9'
     }
 
     environment {
@@ -38,6 +38,11 @@ pipeline {
                         echo 'Running Backend CI and SonarCloud Analysis...'
                         dir('EcoGo') {
                             script {
+                                // Debug JAVA_HOME
+                                sh 'echo "Current JAVA_HOME: $JAVA_HOME"'
+                                sh 'java -version'
+                                sh 'mvn -version'
+                                
                                 // Use 'mvn' directly since Jenkins tool 'maven-3.9.5' is in path
                                 // This avoids JAVA_HOME issues with mvnw wrapper
                                 sh 'mvn clean verify'
