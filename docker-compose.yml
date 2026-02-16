@@ -1,0 +1,33 @@
+services:
+  mongodb:
+    image: mongo:6.0
+    container_name: ecogo-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+    restart: always
+
+  backend:
+    build: ./EcoGo
+    container_name: ecogo-backend
+    ports:
+      - "8090:8090"
+    environment:
+      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/ecogo
+      - SERVER_PORT=8090
+    depends_on:
+      - mongodb
+    restart: always
+
+  frontend:
+    build: ./EcoGoManagementSystem
+    container_name: ecogo-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: always
+
+volumes:
+  mongo_data:
