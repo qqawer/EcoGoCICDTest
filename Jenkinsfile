@@ -1,6 +1,14 @@
 pipeline {
     agent any
 
+    // 使用 Jenkins 内部配置的工具。注意：字符串必须与 Jenkins “全局工具配置” 中的名称一模一样！
+    // 之前你遇到 java not found，就是因为你在 Jenkins 里配置的名字可能叫 jdk17 或者 maven3，而不是 'JDK 17'。
+    // 请确认你 Jenkins (Manage Jenkins -> Tools) 中 JDK 和 Maven 的 Name 到底是什么，并在这里修改一致。
+    tools {
+        jdk 'JDK 17'  // 请根据你 Jenkins 里的实际名称修改
+        maven 'Maven 3.9' // 请根据你 Jenkins 里的实际名称修改
+    }
+
     environment {
         GIT_URL = 'https://github.com/qqawer/EcoGoCICDTest.git'
         BRANCH_NAME = 'main'
@@ -22,13 +30,6 @@ pipeline {
         stage('CI') {
             parallel {
                 stage('Backend CI & Sonar') {
-                    agent {
-                        docker { 
-                            image 'maven:3.9-eclipse-temurin-17'
-                            // 建议增加 Maven 本地仓库挂载，避免每次都重新下载所有依赖
-                            args '-v /var/run/docker.sock:/var/run/docker.sock -v $HOME/.m2:/root/.m2'
-                        }
-                    }
                     steps {
                         dir('EcoGo') {
                             script {
