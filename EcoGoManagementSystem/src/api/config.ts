@@ -1,5 +1,5 @@
 // API 配置文件
-export const API_BASE_URL = 'http://18.141.213.152:8090/api/v1';
+export const API_BASE_URL = 'http://13.229.148.21:8090/api/v1';
 
 // 响应类型（与后端 ResponseMessage 对应）
 export interface ApiResponse<T> {

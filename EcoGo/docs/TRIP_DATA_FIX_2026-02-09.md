@@ -198,7 +198,7 @@ db.trips.aggregate([
 修复后，`GET /api/v1/web/trips/all` 接口应正常返回所有行程数据：
 ```bash
 curl -H "Authorization: Bearer YOUR_ADMIN_TOKEN" \
-  http://18.141.213.152:8090/api/v1/web/trips/all
+  http://13.229.148.21:8090/api/v1/web/trips/all
 ```
 
 预期响应：

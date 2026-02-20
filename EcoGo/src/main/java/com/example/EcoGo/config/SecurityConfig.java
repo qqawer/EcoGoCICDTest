@@ -100,7 +100,7 @@ public class SecurityConfig {
 
                 // Critical fix: Replace wildcard with exact frontend origin to resolve CORS
                 // issues
-                configuration.setAllowedOrigins(Arrays.asList("http://18.141.213.152:3000"));
+                configuration.setAllowedOrigins(Arrays.asList("http://13.229.148.21:3000"));
 
                 // Allow all standard HTTP methods for API operations
                 configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));

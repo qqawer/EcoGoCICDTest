@@ -6,7 +6,7 @@ import retrofit2.http.*
 
 /**
  * 行程API服务接口
- * Base URL: http://18.141.213.152:8090/api/v1
+ * Base URL: http://13.229.148.21:8090/api/v1
  */
 interface TripApiService {
 

@@ -24,7 +24,7 @@ vi.mock('./auth', () => ({
 }));
 
 describe('rewardService', () => {
-    const BASE_URL = 'http://18.141.213.152:8090/api/v1';
+    const BASE_URL = 'http://13.229.148.21:8090/api/v1';
 
     beforeEach(() => {
         vi.clearAllMocks();

@@ -32,11 +32,11 @@ export interface UpdateVipSwitchRequest {
 }
 
 export const fetchVipSwitches = async (): Promise<VipSwitchListResponse> => {
-    const response = await api.get<VipSwitchListResponse>('/admin/vip-switches', { baseURL: 'http://18.141.213.152:8090/api/v1' });
+    const response = await api.get<VipSwitchListResponse>('/admin/vip-switches', { baseURL: 'http://13.229.148.21:8090/api/v1' });
     return response.data;
 };
 
 export const updateVipSwitch = async (data: UpdateVipSwitchRequest): Promise<VipSwitchResponse> => {
-    const response = await api.post('/admin/vip-switches', data, { baseURL: 'http://18.141.213.152:8090/api/v1' });
+    const response = await api.post('/admin/vip-switches', data, { baseURL: 'http://13.229.148.21:8090/api/v1' });
     return response.data;
 };

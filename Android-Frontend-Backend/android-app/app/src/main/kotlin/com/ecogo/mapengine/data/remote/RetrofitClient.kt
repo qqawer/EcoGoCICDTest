@@ -12,7 +12,7 @@ import java.util.concurrent.TimeUnit
 object RetrofitClient {
 
     // 后端服务器地址
-    private const val BASE_URL = "http://18.141.213.152:8090/api/v1/"  // EcoGo服务器
+    private const val BASE_URL = "http://13.229.148.21:8090/api/v1/"  // EcoGo服务器
 
     // 其他环境地址
     // private const val BASE_URL = "http://10.0.2.2:8090/api/v1/"  // 本地开发（模拟器）

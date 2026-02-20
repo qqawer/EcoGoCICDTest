@@ -38,7 +38,7 @@ pipeline {
                                 // 运行测试和打包
                                 sh 'mvn clean verify'
                                 // Sonar 分析
-                                sh "mvn sonar:sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.login=${SONAR_TOKEN}"
+                                sh "mvn sonar:sonar -Dsonar.organization=qqawer -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.login=${SONAR_TOKEN}"
                             }
                         }
                     }
