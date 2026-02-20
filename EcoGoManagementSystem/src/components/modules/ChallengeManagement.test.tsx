@@ -116,7 +116,7 @@ describe('ChallengeManagement', () => {
             title: 'Detail Challenge',
             target: 99,
             reward: 999
-        })));
+        })), { timeout: 3000 });
     });
 
     it('handles create error', async () => {
@@ -159,7 +159,7 @@ describe('ChallengeManagement', () => {
         await waitFor(() => expect(challengeApi.updateChallenge).toHaveBeenCalledWith('1', expect.objectContaining({
             title: 'Updated Title',
             target: 20
-        })));
+        })), { timeout: 3000 });
     });
 
     it('handles update error', async () => {

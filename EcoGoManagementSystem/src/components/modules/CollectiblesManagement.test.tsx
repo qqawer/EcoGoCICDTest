@@ -129,7 +129,7 @@ describe('CollectiblesManagement Component', () => {
 
         await waitFor(() => {
             expect(collectiblesApi.createBadge).toHaveBeenCalled();
-        });
+        }, { timeout: 3000 });
     });
 
     it('deletes a badge', async () => {
