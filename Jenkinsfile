@@ -72,7 +72,7 @@ pipeline {
       stage('Deploy') {
             steps {
                 // 部署时重新拉起全套服务
-                sh 'docker-compose up -d --build'
+                sh 'docker compose up -d --build'
             }
         }
 
