@@ -10,8 +10,8 @@ RUN mvn clean package -DskipTests
 # Stage 2: Runtime
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
-# Workaround for Alpine DNS issue in certain Docker environments
-RUN echo "nameserver 8.8.8.8" > /etc/resolv.conf && apk add --no-cache curl
+# Switch to stable mirror to bypass DNS/network issues
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories && apk add --no-cache curl
 COPY --from=builder /app/target/*.jar app.jar
 
 ENV SERVER_PORT=8090
