@@ -1,31 +1,19 @@
 pipeline {
     agent any
 
-    tools {
-        jdk 'JDK 17'
-        maven 'Maven 3.9'
-    }
-
     environment {
         GIT_URL = 'https://github.com/qqawer/EcoGoCICDTest.git'
         BRANCH_NAME = 'main'
-        
         BACKEND_PORT = '8090'
-        FRONTEND_PORT = '3000' 
-        CHATBOT_PORT = '8000'
-        
-        SERVER_IP          = credentials('SERVER_IP')
-        
-        // SonarCloud Configuration
-        SONAR_TOKEN        = credentials('SONAR_TOKEN')
-        SONAR_HOST_URL     = 'https://sonarcloud.io'
-        SONAR_PROJECT_KEY  = credentials('SONAR_PROJECT_KEY')
+        SERVER_IP = credentials('SERVER_IP')
+        SONAR_TOKEN = credentials('SONAR_TOKEN')
+        SONAR_HOST_URL = 'https://sonarcloud.io'
+        SONAR_PROJECT_KEY = credentials('SONAR_PROJECT_KEY')
     }
 
     stages {
         stage('Checkout Code') {
             steps {
-                echo 'Pulling latest code...'
                 deleteDir()
                 git branch: "${BRANCH_NAME}", url: "${GIT_URL}"
             }
@@ -34,25 +22,22 @@ pipeline {
         stage('CI') {
             parallel {
                 stage('Backend CI & Sonar') {
+                    agent {
+                        docker { 
+                            image 'maven:3.9-eclipse-temurin-17'
+                            // 建议增加 Maven 本地仓库挂载，避免每次都重新下载所有依赖
+                            args '-v /var/run/docker.sock:/var/run/docker.sock -v $HOME/.m2:/root/.m2'
+                        }
+                    }
                     steps {
-                        echo 'Running Backend CI and SonarCloud Analysis...'
                         dir('EcoGo') {
                             script {
-                                // Debug JAVA_HOME
-                                sh 'echo "Current JAVA_HOME: $JAVA_HOME"'
-                                sh 'java -version'
-                                sh 'mvn -version'
-                                
-                                // Use 'mvn' directly since Jenkins tool 'maven-3.9.5' is in path
-                                // This avoids JAVA_HOME issues with mvnw wrapper
+                                // 启动宿主机上的 mongodb 容器
+                                sh 'docker-compose up -d mongodb'
+                                // 运行测试和打包
                                 sh 'mvn clean verify'
-                                
-                                sh """
-                                    mvn sonar:sonar \
-                                      -Dsonar.projectKey=${SONAR_PROJECT_KEY} \
-                                      -Dsonar.host.url=${SONAR_HOST_URL} \
-                                      -Dsonar.login=${SONAR_TOKEN}
-                                """
+                                // Sonar 分析
+                                sh "mvn sonar:sonar -Dsonar.projectKey=${SONAR_PROJECT_KEY} -Dsonar.host.url=${SONAR_HOST_URL} -Dsonar.login=${SONAR_TOKEN}"
                             }
                         }
                     }
@@ -60,22 +45,19 @@ pipeline {
                 
                 stage('Frontend CI') {
                     steps {
-                        echo 'Running Frontend CI...'
                         dir('EcoGoManagementSystem') {
                             script {
-                                // Install Node v20 (Required by dependencies)
-                                // Install Node.js (Force update to ensure correct version)
+                                // 你的 Node 安装逻辑没问题，但执行命令可以简化
                                 sh """
-                                   rm -rf node-bin
-                                   echo "Installing Node.js locally..."
-                                   curl -sO https://nodejs.org/dist/v22.12.0/node-v22.12.0-linux-x64.tar.xz
-                                   tar -xf node-v22.12.0-linux-x64.tar.xz
-                                   mv node-v22.12.0-linux-x64 node-bin
-                                   rm node-v22.12.0-linux-x64.tar.xz
+                                   if [ ! -d "node-bin" ]; then
+                                       curl -sO https://nodejs.org/dist/v22.12.0/node-v22.12.0-linux-x64.tar.xz
+                                       tar -xf node-v22.12.0-linux-x64.tar.xz
+                                       mv node-v22.12.0-linux-x64 node-bin
+                                   fi
                                 """
                                 withEnv(["PATH=${pwd()}/node-bin/bin:${env.PATH}"]) {
+                                    // 删掉重复的命令，保证流程清晰
                                     sh 'npm install'
-                                    // Linting has 100+ errors, making it non-blocking for now so pipeline can proceed
                                     sh 'npm run lint || true'
                                     sh 'npm run test:coverage || true'
                                 }
@@ -86,17 +68,10 @@ pipeline {
             }
         }
 
-        stage('Deploy with Docker Compose') {
+      stage('Deploy') {
             steps {
-                echo 'Building and Deploying containers...'
-                script {
-                    sh 'docker-compose down || true'
-                    sh 'docker-compose build'
-                    sh 'docker-compose up -d'
-                    
-                    // Wait for containers to be up
-                    sleep 15
-                }
+                // 部署时重新拉起全套服务
+                sh 'docker-compose up -d --build'
             }
         }
 

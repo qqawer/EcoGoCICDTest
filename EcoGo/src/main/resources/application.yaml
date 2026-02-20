@@ -1,7 +1,7 @@
 spring:
   data:
     mongodb:
-      uri: mongodb://localhost:27017/EcoGo #我现在本地部署得用localhost才行，所以就在我这个地方改成了这样
+      uri: ${SPRING_DATA_MONGODB_URI:mongodb://localhost:27017/EcoGo} #我现在本地部署得用localhost才行，所以就在我这个地方改成了这样
       database: EcoGo
 
 logging:

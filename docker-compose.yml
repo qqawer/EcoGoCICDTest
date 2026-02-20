@@ -14,7 +14,7 @@ services:
     ports:
       - "8090:8090"
     environment:
-      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/ecogo
+      - SPRING_DATA_MONGODB_URI=mongodb://mongodb:27017/EcoGo
       - SERVER_PORT=8090
     depends_on:
       - mongodb
