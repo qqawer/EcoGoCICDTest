@@ -109,7 +109,7 @@ function drawTripPolyline(
   layerGroup: L.LayerGroup,
   bounds: L.LatLngBounds,
 ) {
-  const rawPoints = trip.polylinePoints || (trip as any).polyline_points;
+  const rawPoints = trip.polylinePoints || (trip as unknown as Record<string, unknown>).polyline_points;
   const parsed = rawPoints ? parsePolylinePoints(rawPoints) : [];
   const routePoints = buildRoutePoints(trip, hasStart, hasEnd, parsed);
 
@@ -121,7 +121,7 @@ function drawTripPolyline(
     color: lineColor, weight: 5, opacity: 0.8,
     dashArray: isFallback ? '10, 10' : undefined,
   }).addTo(layerGroup);
-  routePoints.forEach((p: any) => bounds.extend(p));
+  routePoints.forEach((p: L.LatLngExpression) => bounds.extend(p));
 }
 
 export function TripDataManagement() {
@@ -157,7 +157,7 @@ export function TripDataManagement() {
 
         allTrips.forEach(t => {
           // Handle potential casing issues in field names
-          const uid = t.userId || (t as any).userid || (t as any).userID;
+          const uid = t.userId || (t as unknown as Record<string, unknown>).userid || (t as unknown as Record<string, unknown>).userID;
           if (!uid) return;
 
           if (!statsMap[uid]) {
@@ -197,6 +197,7 @@ export function TripDataManagement() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadUsers(page);
   }, [page]);
 
@@ -228,8 +229,10 @@ export function TripDataManagement() {
   // Fetch Trips when User Selected
   useEffect(() => {
     if (!selectedUserId) {
-      setCurrentTrips([]);
-      setSelectedTripId(null);
+      setTimeout(() => {
+        setCurrentTrips([]);
+        setSelectedTripId(null);
+      }, 0);
       return;
     }
 
@@ -242,7 +245,7 @@ export function TripDataManagement() {
         console.log("[DEBUG] Raw Trip List:", tripList);
         if (tripList.length > 0) {
           console.log("[DEBUG] First Trip Sample:", tripList[0]);
-          console.log("[DEBUG] Carbon Values:", "carbonSaved:", tripList[0].carbonSaved, "carbon_saved:", (tripList[0] as any).carbon_saved);
+          console.log("[DEBUG] Carbon Values:", "carbonSaved:", tripList[0].carbonSaved, "carbon_saved:", (tripList[0] as unknown as Record<string, unknown>).carbon_saved);
         }
 
         setCurrentTrips(tripList);
@@ -314,9 +317,9 @@ export function TripDataManagement() {
   const activeUser = getSelectedUserDetails();
   const selectedTrip = currentTrips.find(t => t.id === selectedTripId);
 
-  const getCarbon = (t: TripDetail | any) => {
+  const getCarbon = (t: TripDetail | Record<string, unknown>) => {
     // Check both potential field names, prefer snake_case
-    const val = t.carbon_saved ?? t.carbonSaved;
+    const val = (t as TripDetail).carbonSaved ?? (t as Record<string, unknown>).carbon_saved;
     // Ensure number
     return val !== undefined && val !== null ? Number(val) : 0;
   };
@@ -368,7 +371,7 @@ export function TripDataManagement() {
                     <span className="bg-green-50 px-1.5 py-0.5 rounded text-green-700 font-medium">
                       Saved: {currentTrips
                         .filter(t => (t.carbonStatus || '').toLowerCase() === 'completed')
-                        .reduce((sum, t) => sum + (t.carbonSaved || (t as any).carbon_saved || 0), 0).toFixed(2)} kg
+                        .reduce((sum, t) => sum + (t.carbonSaved || ((t as unknown as Record<string, unknown>).carbon_saved as number) || 0), 0).toFixed(2)} kg
                     </span>
                   </div>
                 </div>

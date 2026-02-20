@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Search, Edit, UserX } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -34,11 +34,7 @@ export function UserManagement() {
   const [isDeactivateDialogOpen, setIsDeactivateDialogOpen] = useState(false);
   const [userToDeactivate, setUserToDeactivate] = useState<User | null>(null);
 
-  useEffect(() => {
-    loadUsers();
-  }, [page]);
-
-  const loadUsers = async () => {
+  const loadUsers = useCallback(async () => {
     setIsLoading(true);
     try {
       const response = await fetchUserList(page, pageSize);
@@ -55,7 +51,11 @@ export function UserManagement() {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [page, pageSize]);
+
+  useEffect(() => {
+    loadUsers();
+  }, [loadUsers]);
 
   const filteredUsers = users.filter(user =>
     (user.nickname || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -100,17 +100,18 @@ export function UserManagement() {
       };
 
       const response = await updateUser(editingUser.userid, payload);
-      if (response && (response.code === 200 || (response as any).success)) {
+      const res = response as { code?: number | string; message?: string; success?: boolean };
+      if (res && (res.code === 200 || res.success)) {
         toast.success('User updated successfully');
         setIsEditDialogOpen(false);
         setEditingUser(null);
         loadUsers();
       } else {
-        toast.error(response.message || 'Failed to update user');
+        toast.error(res?.message || 'Failed to update user');
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error(error);
-      const msg = error.response?.data?.message || 'Error updating user';
+      const msg = (error as { response?: { data?: { message?: string } } }).response?.data?.message || 'Error updating user';
       toast.error(msg);
     }
   };
@@ -125,14 +126,15 @@ export function UserManagement() {
 
     try {
       const response = await updateUserStatus(userToDeactivate.userid, true);
+      const res = response as { code?: number | string; message?: string };
 
-      if (response && (response.code === 200 || response.code === '200' || response.message?.toLowerCase().includes('success'))) {
+      if (res && (res.code === 200 || res.code === '200' || res.message?.toLowerCase().includes('success'))) {
         toast.success(`User ${userToDeactivate.nickname} has been deactivated`);
         setUserToDeactivate(null);
         setIsDeactivateDialogOpen(false); // Close dialog
         loadUsers();
       } else {
-        toast.error(response.message || 'Failed to deactivate user');
+        toast.error(res?.message || 'Failed to deactivate user');
       }
     } catch (error) {
       console.error(error);

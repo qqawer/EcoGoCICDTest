@@ -46,7 +46,7 @@ export interface User {
     lastLoginAt: string | null;
     createdAt: string;
     updatedAt: string;
-    activityMetrics: any | null; // Define strictly if needed
+    activityMetrics: Record<string, unknown> | null; // Define strictly if needed
     admin: boolean;
     deactivated: boolean;
     isAdmin: boolean;
@@ -93,13 +93,13 @@ export interface UpdateUserRequest {
 }
 
 // Update user details
-export const updateUser = async (userid: string, data: UpdateUserRequest): Promise<any> => {
+export const updateUser = async (userid: string, data: UpdateUserRequest): Promise<unknown> => {
     const response = await api.put(`/users/update/${userid}`, data);
     return response.data;
 };
 
 // Update user status (Deactivate/Activate)
-export const updateUserStatus = async (userid: string, isDeactivated: boolean): Promise<any> => {
+export const updateUserStatus = async (userid: string, isDeactivated: boolean): Promise<unknown> => {
     const response = await api.put(`/users/status/${userid}`, { isDeactivated });
     return response.data;
 };

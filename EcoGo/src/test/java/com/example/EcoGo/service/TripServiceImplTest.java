@@ -41,6 +41,12 @@ class TripServiceImplTest {
     @Mock
     private VipSwitchService vipSwitchService;
 
+    @Mock
+    private org.springframework.data.mongodb.core.MongoTemplate mongoTemplate;
+
+    @Mock
+    private org.springframework.data.mongodb.core.convert.MongoConverter mongoConverter;
+
     @InjectMocks
     private TripServiceImpl tripService;
 
@@ -135,7 +141,8 @@ class TripServiceImplTest {
         when(transportModeRepository.findByMode("walk")).thenReturn(Optional.of(walkMode));
         when(userRepository.findByUserid("user1")).thenReturn(Optional.of(testUser));
         when(vipSwitchService.isSwitchEnabled("Double_points")).thenReturn(false);
-        when(pointsService.formatTripDescription(anyString(), anyString(), anyDouble())).thenReturn("Place A -> Place B (2.5km)");
+        when(pointsService.formatTripDescription(anyString(), anyString(), anyDouble()))
+                .thenReturn("Place A -> Place B (2.5km)");
         when(tripRepository.save(any(Trip.class))).thenAnswer(inv -> inv.getArgument(0));
 
         Trip result = tripService.completeTrip("user1", "trip1", buildCompleteRequest());
@@ -231,8 +238,8 @@ class TripServiceImplTest {
 
         tripService.completeTrip("user1", "trip1", buildCompleteRequest());
 
-        // totalCarbon was 50.0, now should be 50.0 + 2.5 = 52.5
-        assertEquals(52.5, testUser.getTotalCarbon(), 0.01);
+        // totalCarbon was 50.0, now should be 50.0 + 2.5 / 10.0 = 50.25
+        assertEquals(50.25, testUser.getTotalCarbon(), 0.01);
         verify(userRepository).save(testUser);
     }
 
@@ -371,7 +378,12 @@ class TripServiceImplTest {
         trip2.setUserId("user2");
         trip2.setCarbonStatus("completed");
 
-        when(tripRepository.findAll()).thenReturn(List.of(testTrip, trip2));
+        org.bson.Document doc1 = new org.bson.Document();
+        org.bson.Document doc2 = new org.bson.Document();
+        when(mongoTemplate.findAll(org.bson.Document.class, "trips")).thenReturn(List.of(doc1, doc2));
+        when(mongoTemplate.getConverter()).thenReturn(mongoConverter);
+        when(mongoConverter.read(Trip.class, doc1)).thenReturn(testTrip);
+        when(mongoConverter.read(Trip.class, doc2)).thenReturn(trip2);
 
         List<TripDto.TripSummaryResponse> result = tripService.getAllTrips();
 
@@ -380,7 +392,7 @@ class TripServiceImplTest {
 
     @Test
     void getAllTrips_empty() {
-        when(tripRepository.findAll()).thenReturn(List.of());
+        when(mongoTemplate.findAll(org.bson.Document.class, "trips")).thenReturn(List.of());
 
         List<TripDto.TripSummaryResponse> result = tripService.getAllTrips();
 
@@ -389,7 +401,7 @@ class TripServiceImplTest {
 
     @Test
     void getAllTrips_dbException() {
-        when(tripRepository.findAll()).thenThrow(new RuntimeException("DB error"));
+        when(mongoTemplate.findAll(org.bson.Document.class, "trips")).thenThrow(new RuntimeException("DB error"));
 
         List<TripDto.TripSummaryResponse> result = tripService.getAllTrips();
 
@@ -402,7 +414,12 @@ class TripServiceImplTest {
     void getTripsByUser_success() {
         testTrip.setDistance(2.5);
         testTrip.setCarbonSaved(0.5);
-        when(tripRepository.findByUserIdOrderByCreatedAtDesc("user1")).thenReturn(List.of(testTrip));
+
+        org.bson.Document doc1 = new org.bson.Document();
+        when(mongoTemplate.find(any(org.springframework.data.mongodb.core.query.Query.class),
+                eq(org.bson.Document.class), eq("trips"))).thenReturn(List.of(doc1));
+        when(mongoTemplate.getConverter()).thenReturn(mongoConverter);
+        when(mongoConverter.read(Trip.class, doc1)).thenReturn(testTrip);
 
         List<TripDto.TripResponse> result = tripService.getTripsByUser("user1");
 
@@ -412,7 +429,8 @@ class TripServiceImplTest {
 
     @Test
     void getTripsByUser_empty() {
-        when(tripRepository.findByUserIdOrderByCreatedAtDesc("userX")).thenReturn(List.of());
+        when(mongoTemplate.find(any(org.springframework.data.mongodb.core.query.Query.class),
+                eq(org.bson.Document.class), eq("trips"))).thenReturn(List.of());
 
         List<TripDto.TripResponse> result = tripService.getTripsByUser("userX");
 
@@ -421,7 +439,8 @@ class TripServiceImplTest {
 
     @Test
     void getTripsByUser_dbException() {
-        when(tripRepository.findByUserIdOrderByCreatedAtDesc("user1"))
+        when(mongoTemplate.find(any(org.springframework.data.mongodb.core.query.Query.class),
+                eq(org.bson.Document.class), eq("trips")))
                 .thenThrow(new RuntimeException("DB error"));
 
         List<TripDto.TripResponse> result = tripService.getTripsByUser("user1");

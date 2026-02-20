@@ -36,7 +36,8 @@ class RecommendationControllerTest {
     @Test
     void recommend_ragAvailableWithCitations_shouldReturnRagBasedResponse() {
         when(ragService.isAvailable()).thenReturn(true);
-        ChatResponseDto.Citation citation = new ChatResponseDto.Citation("Green Travel", "source1", "Take the MRT for low carbon travel.");
+        ChatResponseDto.Citation citation = new ChatResponseDto.Citation("Green Travel", "source1",
+                "Take the MRT for low carbon travel.");
         when(ragService.retrieve(anyString(), eq(2))).thenReturn(List.of(citation));
 
         RecommendationRequestDto req = new RecommendationRequestDto();
@@ -51,66 +52,62 @@ class RecommendationControllerTest {
     }
 
     @Test
-    void recommend_ragAvailableButNoCitations_shouldFallbackToKeyword() {
+    void recommend_ragAvailableButNoCitations_shouldFallbackToGeneric() {
         when(ragService.isAvailable()).thenReturn(true);
         when(ragService.retrieve(anyString(), eq(2))).thenReturn(Collections.emptyList());
 
         RecommendationRequestDto req = new RecommendationRequestDto();
-        req.setDestination("library");
+        req.setDestination("unknown_place_123");
 
         ResponseMessage<RecommendationResponseDto> resp = controller.recommend(req);
 
         assertEquals(HttpStatus.OK.value(), resp.getCode());
         assertNotNull(resp.getData());
-        assertEquals("Eco-Choice", resp.getData().getTag());
-        assertTrue(resp.getData().getText().contains("library"));
+        assertEquals("Eco-Tip", resp.getData().getTag());
+        assertTrue(resp.getData().getText().contains("unknown_place_123"));
     }
 
     @Test
-    void recommend_ragThrowsException_shouldFallbackToKeyword() {
+    void recommend_ragThrowsException_shouldFallbackToGeneric() {
         when(ragService.isAvailable()).thenReturn(true);
         when(ragService.retrieve(anyString(), eq(2))).thenThrow(new RuntimeException("rag error"));
 
         RecommendationRequestDto req = new RecommendationRequestDto();
-        req.setDestination("gym");
+        req.setDestination("unknown_place_456");
 
         ResponseMessage<RecommendationResponseDto> resp = controller.recommend(req);
 
         assertEquals(HttpStatus.OK.value(), resp.getCode());
-        assertEquals("Healthy", resp.getData().getTag());
+        assertEquals("Eco-Tip", resp.getData().getTag());
     }
 
-    // ---------- Keyword-based fallback ----------
+    // ---------- Keyword-based fallback tests adapted for Campus DB ----------
     @Test
-    void recommend_libraryKeyword_shouldReturnEcoChoice() {
-        when(ragService.isAvailable()).thenReturn(false);
-
+    void recommend_library_shouldReturnCampusBus() {
         RecommendationRequestDto req = new RecommendationRequestDto();
-        req.setDestination("study room");
+        req.setDestination("library"); // Matches Central Library
 
         ResponseMessage<RecommendationResponseDto> resp = controller.recommend(req);
 
-        assertEquals("Eco-Choice", resp.getData().getTag());
+        assertEquals("Campus-Bus", resp.getData().getTag());
+        assertTrue(resp.getData().getText().contains("Central Library"));
     }
 
     @Test
-    void recommend_gymKeyword_shouldReturnHealthy() {
-        when(ragService.isAvailable()).thenReturn(false);
-
+    void recommend_gym_shouldReturnCampusBus() {
         RecommendationRequestDto req = new RecommendationRequestDto();
-        req.setDestination("sports hall");
+        req.setDestination("gym"); // Matches USC
 
         ResponseMessage<RecommendationResponseDto> resp = controller.recommend(req);
 
-        assertEquals("Healthy", resp.getData().getTag());
+        assertEquals("Campus-Bus", resp.getData().getTag());
+        assertTrue(resp.getData().getText().contains("Sports Centre"));
     }
 
     @Test
-    void recommend_mrtKeyword_shouldReturnGreenTransit() {
-        when(ragService.isAvailable()).thenReturn(false);
-
+    void recommend_lawCampus_shouldReturnGreenTransit() {
         RecommendationRequestDto req = new RecommendationRequestDto();
-        req.setDestination("Orchard Road");
+        req.setDestination("law"); // Matches offcampus
 
         ResponseMessage<RecommendationResponseDto> resp = controller.recommend(req);
 
@@ -119,8 +116,6 @@ class RecommendationControllerTest {
 
     @Test
     void recommend_emptyDestination_shouldReturnGeneral() {
-        when(ragService.isAvailable()).thenReturn(false);
-
         RecommendationRequestDto req = new RecommendationRequestDto();
         req.setDestination("");
 
@@ -131,8 +126,6 @@ class RecommendationControllerTest {
 
     @Test
     void recommend_nullDestination_shouldReturnGeneral() {
-        when(ragService.isAvailable()).thenReturn(false);
-
         RecommendationRequestDto req = new RecommendationRequestDto();
         req.setDestination(null);
 
@@ -142,14 +135,15 @@ class RecommendationControllerTest {
     }
 
     @Test
-    void recommend_unknownDestination_shouldReturnFastest() {
+    void recommend_unknownDestination_shouldReturnGeneric() {
         when(ragService.isAvailable()).thenReturn(false);
 
         RecommendationRequestDto req = new RecommendationRequestDto();
-        req.setDestination("Jurong East");
+        req.setDestination("zxcvbnm");
 
         ResponseMessage<RecommendationResponseDto> resp = controller.recommend(req);
 
-        assertEquals("Fastest", resp.getData().getTag());
+        assertEquals("Eco-Tip", resp.getData().getTag());
+        assertTrue(resp.getData().getText().contains("zxcvbnm"));
     }
 }

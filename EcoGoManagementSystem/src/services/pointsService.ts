@@ -62,7 +62,7 @@ export interface AdjustPointsRequest {
 }
 
 // 新增：调整用户积分（Admin）
-export const adjustUserPoints = async (userid: string, data: AdjustPointsRequest): Promise<any> => {
+export const adjustUserPoints = async (userid: string, data: AdjustPointsRequest): Promise<unknown> => {
     const response = await api.post(`/users/${userid}/points/adjust`, data);
     return response.data;
 };

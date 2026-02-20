@@ -381,11 +381,11 @@ export function ChallengeManagement() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {filteredChallenges.map((challenge) => {
+              {filteredChallenges.map((challenge, index) => {
                 const typeInfo = getChallengeTypeInfo(challenge.type as ChallengeType);
 
                 return (
-                  <TableRow key={challenge.id} className="hover:bg-gray-50">
+                  <TableRow key={challenge.id || `temp-${index}`} className="hover:bg-gray-50">
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <span className="text-2xl">{challenge.icon}</span>

@@ -33,7 +33,7 @@ const mocks = vi.hoisted(() => {
 vi.mock('leaflet', () => ({ default: mocks }));
 vi.mock('leaflet.heat', () => ({}));
 
-// @ts-ignore
+// @ts-expect-error global L mock mapping
 globalThis.L = mocks;
 
 describe('HeatMapView Component', () => {

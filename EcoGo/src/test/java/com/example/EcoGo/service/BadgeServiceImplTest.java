@@ -165,11 +165,12 @@ class BadgeServiceImplTest {
         Badge anotherRankBadge = new Badge();
         anotherRankBadge.setBadgeId("badge2");
         anotherRankBadge.setCategory("RANK");
+        anotherRankBadge.setSubCategory("eco");
 
         when(userBadgeRepository.findByUserIdAndBadgeId("user1", "badge1"))
                 .thenReturn(Optional.of(testUserBadge));
         when(badgeRepository.findByBadgeId("badge1")).thenReturn(Optional.of(testBadge));
-        when(badgeRepository.findByCategory("RANK")).thenReturn(List.of(testBadge, anotherRankBadge));
+        when(badgeRepository.findBySubCategory("eco")).thenReturn(List.of(testBadge, anotherRankBadge));
         when(userBadgeRepository.findByUserIdAndIsDisplayTrueAndBadgeIdIn(eq("user1"), anyList()))
                 .thenReturn(List.of(conflictBadge));
         when(userBadgeRepository.save(any(UserBadge.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -186,11 +187,12 @@ class BadgeServiceImplTest {
     @Test
     void toggleBadgeDisplay_equipNoCategoryConflict() {
         testBadge.setCategory("SPECIAL");
+        testBadge.setSubCategory("special_sub");
 
         when(userBadgeRepository.findByUserIdAndBadgeId("user1", "badge1"))
                 .thenReturn(Optional.of(testUserBadge));
         when(badgeRepository.findByBadgeId("badge1")).thenReturn(Optional.of(testBadge));
-        when(badgeRepository.findByCategory("SPECIAL")).thenReturn(List.of(testBadge));
+        when(badgeRepository.findBySubCategory("special_sub")).thenReturn(List.of(testBadge));
         when(userBadgeRepository.findByUserIdAndIsDisplayTrueAndBadgeIdIn(eq("user1"), anyList()))
                 .thenReturn(List.of());
         when(userBadgeRepository.save(any(UserBadge.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -425,7 +427,8 @@ class BadgeServiceImplTest {
         achievementBadge.setCarbonThreshold(50.0);
 
         when(userRepository.findByUserid("user1")).thenReturn(Optional.of(testUser)); // totalCarbon = 100.0
-        when(badgeRepository.findByIsActiveTrueAndAcquisitionMethodAndCarbonThresholdLessThanEqual("achievement", 100.0))
+        when(badgeRepository.findByIsActiveTrueAndAcquisitionMethodAndCarbonThresholdLessThanEqual("achievement",
+                100.0))
                 .thenReturn(List.of(achievementBadge));
         when(userBadgeRepository.findByUserId("user1")).thenReturn(List.of()); // no existing badges
         when(userBadgeRepository.save(any(UserBadge.class))).thenAnswer(inv -> inv.getArgument(0));
@@ -449,7 +452,8 @@ class BadgeServiceImplTest {
         existingBadge.setBadgeId("carbon_50");
 
         when(userRepository.findByUserid("user1")).thenReturn(Optional.of(testUser));
-        when(badgeRepository.findByIsActiveTrueAndAcquisitionMethodAndCarbonThresholdLessThanEqual("achievement", 100.0))
+        when(badgeRepository.findByIsActiveTrueAndAcquisitionMethodAndCarbonThresholdLessThanEqual("achievement",
+                100.0))
                 .thenReturn(List.of(achievementBadge));
         when(userBadgeRepository.findByUserId("user1")).thenReturn(List.of(existingBadge));
 
@@ -462,7 +466,8 @@ class BadgeServiceImplTest {
     @Test
     void checkAndUnlockCarbonBadges_noQualifiedBadges() {
         when(userRepository.findByUserid("user1")).thenReturn(Optional.of(testUser));
-        when(badgeRepository.findByIsActiveTrueAndAcquisitionMethodAndCarbonThresholdLessThanEqual("achievement", 100.0))
+        when(badgeRepository.findByIsActiveTrueAndAcquisitionMethodAndCarbonThresholdLessThanEqual("achievement",
+                100.0))
                 .thenReturn(List.of());
 
         List<UserBadge> result = badgeService.checkAndUnlockCarbonBadges("user1");

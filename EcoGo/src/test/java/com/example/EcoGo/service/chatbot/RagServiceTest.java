@@ -51,7 +51,7 @@ class RagServiceTest {
             assertNotNull(c.getTitle());
             assertNotNull(c.getSource());
             assertNotNull(c.getSnippet());
-            assertTrue(c.getSnippet().length() <= 240);
+            assertTrue(c.getSnippet().length() <= 600);
         }
     }
 

@@ -1,5 +1,5 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { loginAdmin, api } from './auth';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { loginAdmin } from './auth';
 
 // We need to mock axios because auth.ts imports it and creates an instance
 const mocks = vi.hoisted(() => ({
@@ -18,7 +18,7 @@ vi.mock('axios', () => {
                     response: { use: vi.fn() },
                 }
             })),
-            isAxiosError: (payload: any) => !!payload?.isAxiosError,
+            isAxiosError: (payload: unknown) => !!(payload as Record<string, unknown>)?.isAxiosError,
         }
     };
 });

@@ -77,9 +77,8 @@ export interface OrderListResponse {
     };
 }
 
-// Fetch rewards list with pagination
 export const fetchRewards = async (page: number = 1, size: number = 20): Promise<RewardListResponse> => {
-    const response = await api.get<RewardListResponse>(`/goods?page=${page}&size=${size}&_t=${new Date().getTime()}`, { baseURL: 'http://18.141.213.152:8090/api/v1' });
+    const response = await api.get<RewardListResponse>(`/goods?page=${page}&size=${size}&_t=${Date.now()}`, { baseURL: 'http://18.141.213.152:8090/api/v1' });
     return response.data;
 };
 
@@ -104,17 +103,17 @@ export const fetchOrders = async (page: number = 1, size: number = 10): Promise<
     return response.data;
 };
 
-export const createReward = async (data: CreateRewardRequest): Promise<any> => {
+export const createReward = async (data: CreateRewardRequest): Promise<unknown> => {
     const response = await api.post('/goods', data, { baseURL: 'http://18.141.213.152:8090/api/v1' });
     return response.data;
 };
 
-export const updateReward = async (id: string, data: Partial<CreateRewardRequest>): Promise<any> => {
+export const updateReward = async (id: string, data: Partial<CreateRewardRequest>): Promise<unknown> => {
     const response = await api.put(`/goods/${id}`, data, { baseURL: 'http://18.141.213.152:8090/api/v1' });
     return response.data;
 };
 
-export const deleteReward = async (id: string): Promise<any> => {
+export const deleteReward = async (id: string): Promise<unknown> => {
     const response = await api.delete(`/goods/${id}`, { baseURL: 'http://18.141.213.152:8090/api/v1' });
     return response.data;
 };
@@ -122,21 +121,21 @@ export const deleteReward = async (id: string): Promise<any> => {
 // ----- Vouchers API -----
 
 export const fetchVouchers = async (page: number = 1, size: number = 20): Promise<RewardListResponse> => {
-    const response = await api.get<RewardListResponse>(`/goods/admin/vouchers?page=${page}&size=${size}&_t=${new Date().getTime()}`, { baseURL: 'http://18.141.213.152:8090/api/v1' });
+    const response = await api.get<RewardListResponse>(`/goods/admin/vouchers?page=${page}&size=${size}&_t=${Date.now()}`, { baseURL: 'http://18.141.213.152:8090/api/v1' });
     return response.data;
 };
 
-export const createVoucher = async (data: CreateRewardRequest): Promise<any> => {
+export const createVoucher = async (data: CreateRewardRequest): Promise<unknown> => {
     const response = await api.post('/goods/admin/vouchers', data, { baseURL: 'http://18.141.213.152:8090/api/v1' });
     return response.data;
 };
 
-export const updateVoucher = async (id: string, data: Partial<CreateRewardRequest>): Promise<any> => {
+export const updateVoucher = async (id: string, data: Partial<CreateRewardRequest>): Promise<unknown> => {
     const response = await api.put(`/goods/admin/vouchers/${id}`, data, { baseURL: 'http://18.141.213.152:8090/api/v1' });
     return response.data;
 };
 
-export const deleteVoucher = async (id: string): Promise<any> => {
+export const deleteVoucher = async (id: string): Promise<unknown> => {
     const response = await api.delete(`/goods/admin/vouchers/${id}`, { baseURL: 'http://18.141.213.152:8090/api/v1' });
     return response.data;
 };
@@ -154,6 +153,6 @@ export interface CategoryResponse {
 }
 
 export const fetchCategories = async (): Promise<CategoryResponse> => {
-    const response = await api.get<CategoryResponse>(`/goods/categories?_t=${new Date().getTime()}`, { baseURL: 'http://18.141.213.152:8090/api/v1' });
+    const response = await api.get<CategoryResponse>(`/goods/categories?_t=${Date.now()}`, { baseURL: 'http://18.141.213.152:8090/api/v1' });
     return response.data;
 };

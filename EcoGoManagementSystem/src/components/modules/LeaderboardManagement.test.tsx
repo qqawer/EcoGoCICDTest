@@ -198,7 +198,7 @@ describe('LeaderboardManagement', () => {
             await waitFor(() => expect(screen.getByText('No rankings found')).toBeInTheDocument());
 
             // 2. Refresh with delay
-            let resolveRefresh: Function;
+            let resolveRefresh: (value?: unknown) => void;
             const refreshPromise = new Promise(r => resolveRefresh = r);
             vi.mocked(leaderboardApi.getRankingsByType).mockReturnValue(refreshPromise as any);
 
