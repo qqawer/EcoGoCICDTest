@@ -34,7 +34,7 @@ pipeline {
                         dir('EcoGo') {
                             script {
                                 // 启动宿主机上的 mongodb 容器
-                                sh 'docker-compose up -d mongodb'
+                                sh 'docker compose up -d mongodb'
                                 // 运行测试和打包
                                 sh 'mvn clean verify'
                                 // Sonar 分析
